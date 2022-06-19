@@ -24,5 +24,5 @@ fi
 php artisan cache:clear
 php artisan config:clear
 php artisan ide-helper:generate
-php artisan ide-helper:models -N
+# php artisan ide-helper:models -N
 echo "finish laravel application setup"
