@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Log;
 use LINE\LINEBot;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 
+/**
+ * LINE通知のうち、応答メッセージまわりの処理
+ */
 class Handler
 {
     private CurlHTTPClient $httpClient;
@@ -30,12 +33,20 @@ class Handler
     /**
      * @param [LINEBot\Event\BaseEvent] $events
      * @return void
+     * @throws \Exception
      */
     public function reply(array $events): void
     {
         foreach ($events as $event) {
-            // Log::debug($event);
-            $this->bot->replyText($event->getReplyToken(), $this->getReplyMessage($event));
+            $res = $this->bot->replyText($event->getReplyToken(), $this->getReplyMessage($event));
+
+            if (!$res->isSucceeded()) {
+                throw new \Exception(sprintf(
+                    'LINE応答処理でエラーが発生しました。ステータスコード: %d, エラー内容: %s',
+                    $res->getHTTPStatus(),
+                    $res->getJSONDecodedBody()['message']
+                ));
+            }
         }
     }
 
