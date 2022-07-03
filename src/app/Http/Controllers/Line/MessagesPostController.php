@@ -3,32 +3,36 @@
 namespace App\Http\Controllers\Line;
 
 use App\Http\Controllers\Controller;
+use App\Services\Line\Handler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
 
 class MessagesPostController extends Controller
 {
-    private CurlHTTPClient $httpClient;
-    private LINEBot $bot;
-
-    public function __construct()
+    public function __construct(private Handler $lineHandler)
     {
-        $this->httpClient = new CurlHTTPClient(config('services.line.access_token'));
-        $this->bot = new LINEBot($this->httpClient, ['channelSecret' => config('services.line.channel_secret')]);
+        $this->lineHandler = $lineHandler;
     }
 
     public function __invoke(Request $request)
     {
-        Log::debug($request);
-        $request->collect('events')->each(function ($event) {
-            $this->bot->replyText($event['replyToken'], $event['message']['text']);
-        });
-        return [
-            [
-                'res' => 'ok',
-            ]
-        ];
+        $signature = $request->headers->get(LINEBot\Constant\HTTPHeader::LINE_SIGNATURE);
+        if (! LINEBot\SignatureValidator::validateSignature($request->getContent(), config('services.line.channel_secret'), $signature)) {
+            abort(400);
+        }
+
+        try {
+            $this->lineHandler->reply($this->lineHandler->parseEventRequests(
+                requestBody: $request->getContent(),
+                signature: $signature
+            ));
+            return response()->json([
+                'res' => 'ok'
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e);
+            abort(500);
+        }
     }
 }
