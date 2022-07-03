@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TestApiController;
+use App\Http\Controllers\Line\MessagesPostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +19,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/test', [TestApiController::class, 'index']); // /api/test
+// LINE
+Route::post('/line/messages', MessagesPostController::class); // api/line/messages
 
 Route::get('/greeting', function () {
     return 'Hello World';
