@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Log;
 use LINE\LINEBot;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 
+/**
+ * LINE通知のうち、プッシュメッセージまわりの処理
+ */
 class PushHandler
 {
     private CurlHTTPClient $httpClient;
