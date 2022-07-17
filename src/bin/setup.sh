@@ -21,8 +21,10 @@ if [ -z $ENV_APP_KEY_VALUE ]; then
     echo "generate APP_KEY"
     php artisan key:generate --force
 fi
+chmod -R 777 storage/
 php artisan cache:clear
 php artisan config:clear
 php artisan ide-helper:generate
 # php artisan ide-helper:models -N
+php artisan migrate
 echo "finish laravel application setup"
