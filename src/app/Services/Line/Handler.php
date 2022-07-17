@@ -75,11 +75,12 @@ class Handler
 
         // 送信メッセージ内容に応じて、返信内容を可変させる
         if ($userSendMessage === 'tatsukoni') {
-            $replyMessage .= 'sample';
+            $replyMessage .= "sample\n";
         } else {
-            $replyMessage .= 'dummy';
+            $replyMessage .= "dummy\n";
         }
 
+        $replyMessage .= env('APP_URL') . '/dashboard';
         return $replyMessage;
     }
 }

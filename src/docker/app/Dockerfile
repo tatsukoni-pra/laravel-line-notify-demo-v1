@@ -1,4 +1,8 @@
+FROM node:16-alpine3.13 as node
+
 FROM php:8.0-fpm-alpine3.13
+COPY --from=node /usr/local/bin/node /usr/local/bin/
+COPY --from=node /usr/local/lib/node_modules/ /usr/local/lib/node_modules/
 
 # package install
 RUN apk update && \
@@ -10,6 +14,7 @@ RUN apk update && \
     icu-dev \
     libzip-dev \
     make \
+    npm \
     oniguruma-dev && \
     docker-php-ext-install intl pdo_mysql bcmath
 
