@@ -80,7 +80,7 @@ class Handler
             $replyMessage .= "dummy\n";
         }
 
-        $replyMessage .= env('APP_URL') . '/dashboard';
+        $replyMessage .= env('APP_URL') . '/dashboard?openExternalBrowser=1';
         return $replyMessage;
     }
 }
